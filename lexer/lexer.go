@@ -1,17 +1,21 @@
 package lexer
 
-import "github.com/mty2015/monkey/token"
+import (
+	"unicode"
+
+	"github.com/mty2015/monkey/token"
+)
 
 type Lexer struct {
-	input        string
+	input        []rune
 	position     int  // current position in input (points to current char)
 	readPosition int  // current reading position in input (after current char)
-	ch           byte // current char under examination
+	ch           rune // current char under examination
 }
 
 // New creates a new Lexer
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	l := &Lexer{input: []rune(input)}
 	l.readChar()
 	return l
 }
@@ -94,7 +98,7 @@ func (l *Lexer) readIdentifier() string {
 	for isLetter(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readNumber() string {
@@ -102,17 +106,17 @@ func (l *Lexer) readNumber() string {
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
-func isLetter(b byte) bool {
-	return 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '_'
+func isLetter(c rune) bool {
+	return unicode.IsLetter(c) || c == '_'
 }
 
-func isDigit(b byte) bool {
-	return '0' <= b && b <= '9'
+func isDigit(c rune) bool {
+	return '0' <= c && c <= '9'
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
