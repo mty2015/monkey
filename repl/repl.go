@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/mty2015/monkey/evaluator"
 	"github.com/mty2015/monkey/lexer"
 	"github.com/mty2015/monkey/parser"
 )
@@ -30,8 +31,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, progroam.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(progroam)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
